@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="640" viewBox="0 0 1440 640" role="img" aria-labelledby="title desc">
+  <title id="title">Codex项目恢复助手：找回项目，保留原来的对话</title>
+  <desc id="desc">浅色与森林绿的原创封面。文件夹和聊天图形表示保留项目与聊天的关联，下方显示检查本机、确认项目、备份修复、核验结果四步流程。这是流程示意，实际工具界面见正文截图。</desc>
+  <rect width="1440" height="640" rx="24" fill="#F3F7F3"/>
+  <path d="M760 0H1416Q1440 0 1440 24V493H760Z" fill="#E8F1E9"/>
+  <g font-family="Segoe UI,Microsoft YaHei,PingFang SC,Arial,sans-serif">
+    <g transform="translate(72 65)" stroke="#226B51" stroke-width="2.4" stroke-linejoin="round">
+      <path d="M0 10V0H20L28 8H57V43H0Z" fill="#E1EEE4"/>
+      <path d="M1 14H56" fill="none"/>
+      <path d="M33 27H65V48H48L41 55V48H33Z" fill="#FFFFFF"/>
+      <path d="M41 36H56M41 41H51" fill="none"/>
+    </g>
+    <text x="156" y="100" font-size="27" font-weight="600" fill="#226B51">Codex项目恢复助手</text>
+    <text x="68" y="225" font-size="64" font-weight="700" fill="#18342E">找回项目，</text>
+    <text x="68" y="311" font-size="64" font-weight="700" fill="#18342E">保留原来的对话。</text>
+    <text x="72" y="369" font-size="25" fill="#4F6A5E">先查看恢复依据，再由你确认写入。</text>
+    <text x="72" y="441" font-size="23" fill="#226B51">本机处理</text>
+    <circle cx="190" cy="433" r="3" fill="#90A899"/>
+    <text x="212" y="441" font-size="23" fill="#226B51">自动备份</text>
+    <circle cx="330" cy="433" r="3" fill="#90A899"/>
+    <text x="352" y="441" font-size="23" fill="#226B51">支持撤销</text>
+    <text x="1029" y="78" font-size="22" fill="#4F6A5E">Windows · 社区预览版</text>
+    <g transform="translate(845 127)">
+      <rect x="110" y="15" width="274" height="214" rx="16" fill="#D8E5D9"/>
+      <rect x="84" y="40" width="274" height="214" rx="16" fill="#FFFFFF" stroke="#ADC6B4" stroke-width="2"/>
+      <path d="M116 80H198M116 106H290M116 132H260" stroke="#BDCEC2" stroke-width="6" stroke-linecap="round"/>
+      <path d="M20 137V102Q20 86 36 86H125L154 118H334Q352 118 352 136V298Q352 314 336 314H36Q20 314 20 298Z" fill="#226B51"/>
+      <path d="M22 152H351" stroke="#75A88A" stroke-width="3"/>
+      <path d="M78 220H155M78 244H125" stroke="#D9EBDD" stroke-width="8" stroke-linecap="round"/>
+      <path d="M250 203H430Q449 203 449 222V310Q449 329 430 329H334L303 356V329H250Q231 329 231 310V222Q231 203 250 203Z" fill="#FFFFFF" stroke="#226B51" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M266 242H407M266 266H388M266 290H344" stroke="#6F957D" stroke-width="7" stroke-linecap="round"/>
+      <path d="M420 110C451 126 464 150 464 179" fill="none" stroke="#226B51" stroke-width="3" stroke-linecap="round"/>
+      <path d="M453 166L464 180L475 166" fill="none" stroke="#226B51" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <path d="M72 493H1368" stroke="#CFDED2" stroke-width="1.5"/>
+    <g fill="#18342E" font-size="25" font-weight="600">
+      <text x="134" y="563">检查本机</text>
+      <text x="470" y="563">确认项目</text>
+      <text x="805" y="563">备份修复</text>
+      <text x="1142" y="563">核验结果</text>
+    </g>
+    <g fill="#E0ECE2" stroke="#B6CDBD" stroke-width="1.5">
+      <circle cx="95" cy="554" r="22"/>
+      <circle cx="431" cy="554" r="22"/>
+      <circle cx="767" cy="554" r="22"/>
+      <circle cx="1103" cy="554" r="22"/>
+    </g>
+    <g fill="#226B51" font-size="22" font-weight="600" text-anchor="middle">
+      <text x="95" y="562">1</text><text x="431" y="562">2</text>
+      <text x="767" y="562">3</text><text x="1103" y="562">4</text>
+    </g>
+    <g fill="none" stroke="#9BB5A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M294 554H354M345 546L354 554L345 562"/>
+      <path d="M630 554H690M681 546L690 554L681 562"/>
+      <path d="M966 554H1026M1017 546L1026 554L1017 562"/>
+    </g>
+  </g>
+</svg>

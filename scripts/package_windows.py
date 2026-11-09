@@ -37,7 +37,7 @@ def main():
         "完整备份含私人数据，请勿上传。详细步骤与限制见 README.md。\n"
     )
     archive = dist / f"CodexProjectRescue-{version}-windows-x64.zip"
-    sources = ["README.md", "SECURITY.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md", "VERSION", "pyproject.toml", "docs/recovery-model.md", "docs/preview.png"]
+    sources = ["README.md", "SECURITY.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md", "VERSION", "pyproject.toml", "docs/recovery-model.md", "docs/cover.svg", "docs/preview.png"]
     sources += [str(path.relative_to(repo)).replace("\\", "/") for path in (repo / "docs/badges").glob("*.svg")]
     sources += [str(path.relative_to(repo)).replace("\\", "/") for path in (repo / "docs/licenses").iterdir() if path.is_file()]
     if (repo / "LICENSE").is_file():

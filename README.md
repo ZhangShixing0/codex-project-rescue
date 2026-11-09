@@ -1,5 +1,7 @@
 <h1 align="center">Codex项目恢复助手</h1>
 
+<p align="center"><img src="docs/cover.svg" alt="Codex项目恢复助手封面：找回项目，保留原来的对话；检查本机、确认项目、备份修复、核验结果四步流程" width="1200"></p>
+
 <p align="center"><strong>先查看恢复证据，再找回丢失的本地项目列表与聊天归属。</strong></p>
 
 <p align="center"><a href="#快速开始">开始使用</a> · <a href="#如何使用">恢复步骤</a> · <a href="docs/recovery-model.md">恢复原理</a> · <a href="#支持范围与限制">支持范围</a></p>
