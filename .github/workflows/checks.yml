@@ -1,0 +1,37 @@
+name: Checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m unittest discover -s tests -v
+      - run: python -m compileall -q src launch.py
+  package:
+    runs-on: windows-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install pyinstaller==6.16.0
+      - run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name CodexProjectRescue --paths src launch.py
+      - run: python scripts/package_windows.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CodexProjectRescue-Windows-preview
+          path: |
+            dist/CodexProjectRescue-*-windows-x64.zip
+            dist/SHA256SUMS.txt
+          retention-days: 14

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="20" viewBox="0 0 120 20" role="img" aria-labelledby="title desc">
+<title id="title">Stage: Alpha</title>
+<desc id="desc">Project information: Stage Alpha.</desc>
+<rect width="60" height="20" fill="#555555"/>
+<rect x="60" width="60" height="20" fill="#456a63"/>
+<g font-family="Verdana,Arial,'Microsoft YaHei',sans-serif" font-size="11" fill="#ffffff" text-anchor="middle">
+<text x="30.0" y="14">Stage</text>
+<text x="90.0" y="14">Alpha</text>
+</g></svg>

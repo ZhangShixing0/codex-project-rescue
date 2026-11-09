@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-project-rescue"
+version = "0.1.0a1"
+description = "Preview, back up and restore missing local Codex project registrations on Windows."
+requires-python = ">=3.11"
+readme = "README.md"
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+codex-project-rescue = "codex_rescue.cli:main"
+
+[project.gui-scripts]
+codex-project-rescue-gui = "codex_rescue.gui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
