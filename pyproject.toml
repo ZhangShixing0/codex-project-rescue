@@ -8,6 +8,7 @@ version = "0.1.0a1"
 description = "Preview, back up and restore missing local Codex project registrations on Windows."
 requires-python = ">=3.11"
 readme = "README.md"
+license = {file = "LICENSE"}
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Operating System :: Microsoft :: Windows",

@@ -9,7 +9,7 @@ from .platform import EnvironmentError, backup_home, default_home
 
 
 def parser():
-    command = argparse.ArgumentParser(description="本地 Codex 项目恢复；默认只读，不关闭应用。")
+    command = argparse.ArgumentParser(description="Codex项目恢复助手；默认只读，不关闭应用。")
     command.add_argument("--home", type=Path, default=default_home(), help="Codex 数据目录")
     command.add_argument("--scope", choices=["current", "all"], default="current", help="all 仅在确认这些账号都由你管理时使用")
     command.add_argument("--historical-state", type=Path, help="可选的历史 global-state JSON；只读")

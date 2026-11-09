@@ -8,7 +8,7 @@ import os
 import sqlite3
 import tempfile
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -160,6 +160,7 @@ class Plan:
     skipped: dict[str, int]
     changes: list[dict]
     input_signature: str
+    project_issues: list[dict] = field(default_factory=list)
     schema: int = 1
 
     @property
@@ -224,10 +225,14 @@ def scan(home: Path, scope: str = "current", historical_state: Path | None = Non
         for pid, p in source.get("local-projects", {}).items():
             saved.setdefault(pid, []).append(p)
     candidates = {}
+    project_issues = []
     skipped = {"cloud_linked_projects": 0, "ambiguous_projects": 0, "missing_roots": 0,
                "missing_threads": 0, "ambiguous_memberships": 0, "missing_rollouts": 0,
                "project_conflicts": 0, "preserved_memberships": 0}
     for sid, dbp in db_projects.items():
+        def skip_project(reason):
+            skipped[reason] += 1
+            project_issues.append({"id": sid, "name": dbp["name"], "rootPaths": roots.get(sid, []), "reason": reason})
         try:
             metadata = json.loads(dbp["metadata"])
         except (ValueError, TypeError) as exc:
@@ -257,7 +262,7 @@ def scan(home: Path, scope: str = "current", historical_state: Path | None = Non
                 conflicting_evidence |= bool(possible and possible != {explicit})
         conflicting_evidence |= any(keys[k] != {sid} for k in related_keys)
         if conflicting_evidence:
-            skipped["ambiguous_projects"] += 1
+            skip_project("ambiguous_projects")
             continue
         if not legacy_ids:
             if explicit and uuid_like(explicit):
@@ -267,19 +272,19 @@ def scan(home: Path, scope: str = "current", historical_state: Path | None = Non
             elif not related_keys and uuid_like(sid):
                 legacy_ids = {sid}
         if len(legacy_ids) != 1:
-            skipped["ambiguous_projects"] += 1
+            skip_project("ambiguous_projects")
             continue
         pid = next(iter(legacy_ids))
         variants = saved.get(pid, [])
         if any(k.startswith("codex.chatGpt") or k.startswith("codex.retiredChatGpt") for k in metadata) or any(any(p.get(k) is not None for k in CLOUD_KEYS) for p in variants):
-            skipped["cloud_linked_projects"] += 1
+            skip_project("cloud_linked_projects")
             continue
         paths = roots.get(sid, [])
         if not paths or not all(Path(path).is_absolute() and Path(path).is_dir() for path in paths):
-            skipped["missing_roots"] += 1
+            skip_project("missing_roots")
             continue
         if any(normalized_roots(p["rootPaths"]) != normalized_roots(paths) for p in variants):
-            skipped["ambiguous_projects"] += 1
+            skip_project("ambiguous_projects")
             continue
         candidates[pid] = {
             "record": {"id": pid, "name": dbp["name"], "rootPaths": paths,
@@ -340,6 +345,8 @@ def scan(home: Path, scope: str = "current", historical_state: Path | None = Non
             conflict |= any(key != pid and normalized_roots(other["rootPaths"]) == normalized_roots(record["rootPaths"]) for key, other in registry.items())
             if conflict:
                 skipped["project_conflicts"] += 1
+                project_issues.append({"id": pid, "name": record["name"], "rootPaths": record["rootPaths"],
+                                       "reason": "project_conflicts", "owner": owner})
                 continue
             registry.setdefault(pid, copy.deepcopy(record))
             mapping[pid] = p["server_id"]
@@ -383,7 +390,7 @@ def scan(home: Path, scope: str = "current", historical_state: Path | None = Non
                                db_hash, extra_hash, scope])
     return Plan(home, scope, before, backup_before, result, db_hash, extra_path, extra_hash, summaries,
                 [{"id": pid, **p["record"], "evidence": p["evidence"]} for pid, p in candidates.items()],
-                notices, skipped, changes, signature)
+                notices, skipped, changes, signature, project_issues=project_issues)
 
 
 def verify_changes(before, candidate, changes):
