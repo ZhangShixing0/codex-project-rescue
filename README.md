@@ -36,7 +36,7 @@
 
 ### Windows 图形界面
 
-推荐下载 [Windows 便携预览版 v0.1.0a1](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.1.0a1)，无需安装 Python：
+推荐下载 [Windows 便携预览版 v0.1.0a2](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.1.0a2)，无需安装 Python：
 
 1. 在下载页的 Assets 中选择 `CodexProjectRescue-0.1.0a1-windows-x64.zip`，解压到独立文件夹。
 2. 双击 `CodexProjectRescue.exe`，点击“开始检查”。此时可以保持 Codex 打开。
