@@ -35,7 +35,7 @@ def main():
         "4. 准备修复时，由你保存工作并手动退出 Codex，保持本工具打开。\n"
         "5. 重新检查运行状态，点击“备份并修复”。完成后由你打开 Codex 核验。\n\n"
         "工具不会关闭、重启或自动打开 Codex。这是独立社区预览版。\n"
-        f"当前写入仅支持 Windows Codex {supported_builds_label()}；其他版本只允许扫描。\n"
+        f"已知 Windows 版本：{supported_builds_label()}；其他版本先做本地结构检查，通过后也可继续。\n"
         "完整备份含私人数据，请勿上传。详细步骤与限制见 README.md。\n"
     )
     archive = dist / f"CodexProjectRescue-{version}-windows-x64.zip"

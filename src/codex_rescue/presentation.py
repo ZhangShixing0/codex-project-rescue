@@ -60,16 +60,33 @@ def project_overview(plan):
 
 
 def build_status():
+    return _build_status(None)
+
+
+def _build_status(home):
     try:
         versions = platform.installed_builds()
-        return {"status": "supported" if len(versions) == 1 and versions[0] in platform.SUPPORTED_BUILDS else "unsupported",
-                "versions": versions, "detail": ""}
+        if len(versions) > 1:
+            return {"status": "unsupported", "versions": versions, "detail": "检测到多个 Codex 安装版本。"}
+        if len(versions) == 1 and versions[0] in platform.SUPPORTED_BUILDS:
+            return {"status": "supported", "versions": versions, "detail": "已知版本；仍会复核本地结构。"}
+        if home is not None:
+            compatible, detail = platform.schema_probe(home)
+            if compatible:
+                return {"status": "schema-compatible", "versions": versions,
+                        "detail": "版本号未列入清单，但本地状态结构通过兼容检查。"}
+            return {"status": "unsupported", "versions": versions, "detail": detail}
+        return {"status": "unsupported", "versions": versions, "detail": "需要读取本地状态结构后判断。"}
     except Exception:
         return {"status": "unknown", "versions": [], "detail": "无法核实本机版本；仍可只读扫描。"}
 
 
+def build_status_for_home(home):
+    return _build_status(home)
+
+
 def preflight(plan, backup_root):
-    result = {"build": build_status(), "process": "unknown", "backup": "unchecked", "preview": "unchecked", "ready": False}
+    result = {"build": build_status_for_home(plan.home), "process": "unknown", "backup": "unchecked", "preview": "unchecked", "ready": False}
     try:
         result["process"] = "running" if platform.running_processes() else "closed"
     except Exception:
@@ -85,10 +102,10 @@ def preflight(plan, backup_root):
         result["backup"] = "available"
     except Exception:
         result["backup"] = "unavailable"
-    if result["build"]["status"] == "supported" and result["process"] == "closed":
+    if platform.can_write_status(result["build"]["status"]) and result["process"] == "closed":
         fresh = scan(plan.home, plan.scope, plan.extra_path)
         result["preview"] = "fresh" if fresh.input_signature == plan.input_signature and fresh.candidate == plan.candidate else "stale"
-    result["ready"] = result["build"]["status"] == "supported" and result["process"] == "closed" and result["backup"] == "available" and result["preview"] == "fresh" and plan.actionable
+    result["ready"] = platform.can_write_status(result["build"]["status"]) and result["process"] == "closed" and result["backup"] == "available" and result["preview"] == "fresh" and plan.actionable
     return result
 
 

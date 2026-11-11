@@ -3,6 +3,6 @@
   "badges": [
     {"file": "stage.svg", "label": "Stage", "value": "Alpha", "category": "version", "evidence": "../../VERSION"},
     {"file": "runtime.svg", "label": "Runtime", "value": "Python 3.11+", "category": "runtime", "evidence": "../../pyproject.toml"},
-    {"file": "platform.svg", "label": "Platform", "value": "Windows", "category": "platform", "evidence": "../../src/codex_rescue/platform.py"}
+    {"file": "platform.svg", "label": "Platform", "value": "Windows, macOS, Linux", "category": "platform", "evidence": "../../src/codex_rescue/platform.py"}
   ]
 }

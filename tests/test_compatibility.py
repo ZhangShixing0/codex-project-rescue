@@ -54,18 +54,23 @@ class CompatibilityTests(unittest.TestCase):
         self.assertEqual((f.home / core.STATE_NAME).read_bytes(), before)
         self.assertEqual(list(f.backups.iterdir()), [])
 
-    def test_unknown_missing_and_multiple_builds_remain_scan_only(self):
+    def test_unknown_builds_use_schema_compatibility_and_multiple_installs_block(self):
         f = self.fixture
+        with mock.patch.object(platform, "installed_builds", return_value=[]), mock.patch.object(platform, "running_processes", return_value=[]):
+            plan = f.scan()
+            self.assertTrue(plan.actionable)
+            self.assertEqual(presentation.build_status_for_home(f.home)["status"], "schema-compatible")
+            backup = core.apply(plan, f.backups)
+            self.assertTrue((f.home / core.STATE_NAME).read_bytes() != plan.before)
+            core.rollback(f.home, backup, f.backups)
+
         before = (f.home / core.STATE_NAME).read_bytes()
-        for versions in ([], ["26.1103.7774.0"], ["26.1103.7773.0", "26.1103.4239.0"]):
-            with self.subTest(versions=versions), mock.patch.object(platform, "installed_builds", return_value=versions), mock.patch.object(platform, "running_processes", return_value=[]):
-                plan = f.scan()
-                self.assertTrue(plan.actionable)
-                self.assertEqual(presentation.build_status()["status"], "unsupported")
-                with self.assertRaisesRegex(platform.EnvironmentError, "尚未验证"):
-                    core.apply(plan, f.backups)
+        with mock.patch.object(platform, "installed_builds", return_value=["26.1103.7773.0", "26.1103.4239.0"]), mock.patch.object(platform, "running_processes", return_value=[]):
+            plan = f.scan()
+            self.assertEqual(presentation.build_status_for_home(f.home)["status"], "unsupported")
+            with self.assertRaisesRegex(platform.EnvironmentError, "多个 Codex"):
+                core.apply(plan, f.backups)
         self.assertEqual((f.home / core.STATE_NAME).read_bytes(), before)
-        self.assertFalse(f.backups.exists())
 
     def test_discovery_failure_does_not_enable_new_build_writes(self):
         f = self.fixture
@@ -73,6 +78,16 @@ class CompatibilityTests(unittest.TestCase):
             self.assertEqual(presentation.build_status()["status"], "unknown")
             with self.assertRaises(platform.EnvironmentError):
                 core.apply(f.scan(), f.backups)
+        self.assertFalse(f.backups.exists())
+
+    def test_unknown_build_with_damaged_schema_remains_scan_only(self):
+        f = self.fixture
+        plan = f.scan()
+        (f.home / core.DB_NAME).unlink()
+        with mock.patch.object(platform, "installed_builds", return_value=["99.0.0.0"]), mock.patch.object(platform, "running_processes", return_value=[]):
+            self.assertEqual(presentation.build_status_for_home(f.home)["status"], "unsupported")
+            with self.assertRaisesRegex(platform.EnvironmentError, "结构"):
+                core.apply(plan, f.backups)
         self.assertFalse(f.backups.exists())
 
 

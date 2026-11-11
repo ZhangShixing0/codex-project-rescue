@@ -8,10 +8,10 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from . import __version__
+from . import __version__, platform
 from .core import apply, rollback, scan
 from .platform import backup_home, default_home, supported_builds_label
-from .presentation import PROJECT_STATUS, build_status, failure_report, list_backups, preflight, project_overview
+from .presentation import PROJECT_STATUS, build_status_for_home, failure_report, list_backups, preflight, project_overview
 from .widgets import BODY, COLORS as C, Button, folder_symbol
 
 APP_NAME = "Codex项目恢复助手"
@@ -181,16 +181,17 @@ class RescueApp:
         options.pack(fill="x")
         for title, value in (("仅当前账号（推荐）", False), (f"我管理的 {view['saved_account_count']} 个已保存账号", True)):
             ttk.Radiobutton(options, text=title, variable=self.all_accounts, value=value, command=self.scope_changed).pack(side="left", padx=(0, 16))
-        if self.build["status"] != "supported":
-            self.notice("当前版本未确认支持写入，仍可查看只读结果。现在无需退出 Codex。", warning=True, parent=below)
+        write_capable = platform.can_write_status(self.build["status"])
+        if not write_capable:
+            self.notice("本地状态结构尚未通过写入检查，仍可查看只读结果。现在无需退出 Codex。", warning=True, parent=below)
         elif not self.plan.actionable:
             self.notice("记录可能已齐全，或缺少足够依据。请查看跳过原因；侧栏仍空时继续排查显示问题。", parent=below)
         rows = [r for r in view["rows"] if r["status"] in {"added", "repaired"}]
         self.project_table(self.content, rows or view["rows"])
-        if self.plan.actionable and self.build["status"] == "supported":
+        if self.plan.actionable and write_capable:
             self.footer("这一步尚未写入。下一步会检查修复条件。", "确认项目，继续", self.prepare, ("重新检查", self.start_scan))
-        elif self.build["status"] != "supported":
-            self.footer("保持原记录，未知版本只允许扫描。", "查看兼容说明", self.compatibility, ("重新检查", self.start_scan))
+        elif not write_capable:
+            self.footer("保持原记录，先完成本地结构检查。", "查看兼容说明", self.compatibility, ("重新检查", self.start_scan))
         else:
             self.footer("未修改项目记录。", "查看后续处理", self.troubleshoot, ("重新检查", self.start_scan))
 
@@ -222,15 +223,15 @@ class RescueApp:
 
     def page_prepare(self):
         ready = self.readiness or {}
-        if ready.get("build", {}).get("status") != "supported":
+        if not platform.can_write_status(ready.get("build", {}).get("status", "")):
             self.build = ready.get("build", {"status": "unknown", "versions": []})
-            self.title("当前版本未确认支持写入", "修复前的复核未通过。你仍然可以查看项目预览和导出匿名诊断。")
-            self.notice("现在无需退出 Codex。请保留原记录，待版本适配后再修复。", warning=True)
+            self.title("本地状态结构未通过写入检查", "修复前的复核未通过。你仍然可以查看项目预览和导出匿名诊断。")
+            self.notice("现在无需退出 Codex。请保留原记录，先修复结构检查问题。", warning=True)
             self.footer("没有写入项目记录。", "查看兼容说明", self.compatibility, ("返回预览", self.return_review))
             return
         self.title("准备好了，由你确认修复" if ready.get("ready") else "确认好项目后，再准备修复", "工具只按刚才确认的范围处理。不会自动退出、重启或打开 Codex。")
         entries = [
-            ("当前版本", "已适配，可以应用" if ready.get("build", {}).get("status") == "supported" else "未确认支持，只能扫描", ready.get("build", {}).get("status") == "supported"),
+            ("兼容性", "版本已知或本地结构通过检查，可以应用" if platform.can_write_status(ready.get("build", {}).get("status", "")) else "本地结构未通过检查，只能扫描", platform.can_write_status(ready.get("build", {}).get("status", ""))),
             ("备份位置", "已确认可写入，修复前会自动备份" if ready.get("backup") == "available" else "无法写入，请更换独立备份目录", ready.get("backup") == "available"),
             ("Codex 运行状态", {"running": "等待你手动退出；请保留本工具窗口", "closed": "已经退出，仍需由你点击按钮才写入", "unknown": "无法核实，暂不允许写入"}.get(ready.get("process"), "正在等待检查"), ready.get("process") == "closed"),
             ("恢复预览", {"fresh": "与当前记录一致", "stale": "记录已有变化，请重新扫描并确认", "unchecked": "退出 Codex 后再复核"}.get(ready.get("preview"), "等待复核"), ready.get("preview") == "fresh"),
@@ -288,8 +289,8 @@ class RescueApp:
         home, history = Path(self.home.get()), Path(self.history.get()) if self.history.get().strip() else None
         scope = "all" if self.all_accounts.get() else "current"
         def inspect():
-            build = build_status()
             plan = scan(home, scope, history)
+            build = build_status_for_home(home)
             return plan, build
         self.state = "scan"
         self.run("scan", inspect)
@@ -488,7 +489,8 @@ class RescueApp:
 
     def compatibility(self):
         versions = ", ".join((self.build or {}).get("versions", [])) or "未能核实"
-        messagebox.showinfo("版本兼容性", f"本机版本：{versions}\n已核对写入版本：Windows {supported_builds_label()}。\n未知版本可以扫描，但不能强行写入。现在无需退出 Codex。", parent=self.root)
+        detail = (self.build or {}).get("detail", "")
+        messagebox.showinfo("本地兼容性", f"本机版本：{versions}\n已知版本：{supported_builds_label()}。\n工具优先检查本地状态结构；结构通过即可继续，不再只按版本号拦截。\n{detail}\n现在无需退出 Codex。", parent=self.root)
 
     def troubleshoot(self):
         messagebox.showinfo("下一步怎么做", "1. 确认当前登录账号属于刚才选择的恢复范围。\n2. 区分项目未显示与某条聊天打不开。\n3. 查看全部依据中的跳过原因，保留本次备份。\n4. 缺少记录时，可在设置中选择已有历史状态文件。\n5. 导出匿名诊断继续排查，避免反复覆盖。\n\nWindows 的免退出窗口绕行尚未验证。工具不会自动重启应用。", parent=self.root)

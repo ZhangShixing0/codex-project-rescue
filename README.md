@@ -1,16 +1,16 @@
 <h1 align="center">Codex项目恢复助手</h1>
 
-<p align="center"><img src="docs/cover.png" alt="Codex项目恢复助手：找回项目，保留原来的对话。米白背景上，三个水彩文件夹由绿线连接，中央文件夹带有对话气泡。Windows 社区预览版。" width="1200"></p>
+<p align="center"><img src="docs/cover.png" alt="Codex项目恢复助手：找回项目，保留原来的对话。米白背景上，三个水彩文件夹由绿线连接，中央文件夹带有对话气泡。跨平台社区预览版。" width="1200"></p>
 
 <p align="center"><strong>先查看恢复证据，再找回丢失的本地项目列表与聊天归属。</strong></p>
 
 <p align="center"><a href="#快速开始">开始使用</a> · <a href="#如何使用">恢复步骤</a> · <a href="docs/recovery-model.md">恢复原理</a> · <a href="#支持范围与限制">支持范围</a></p>
 
-<p align="center"><img src="docs/badges/stage.svg" alt="Stage: Alpha"> <img src="docs/badges/runtime.svg" alt="Runtime: Python 3.11+"> <img src="docs/badges/platform.svg" alt="Platform: Windows"></p>
+<p align="center"><img src="docs/badges/stage.svg" alt="Stage: Alpha"> <img src="docs/badges/runtime.svg" alt="Runtime: Python 3.11+"> <img src="docs/badges/platform.svg" alt="Platform: Windows, macOS, Linux"></p>
 
 ## 解决什么问题
 
-独立社区工具，不是 OpenAI 官方修复程序。当前为 `0.1.0a2` Windows 适配预览版。扫描不修改 Codex；应用修复需由你手动退出 Codex。不能保证所有丢失数据都能恢复，也不保证升级或未来新账号会自动同步。
+独立社区工具，不是 OpenAI 官方修复程序。当前为 `0.2.0a1` 结构兼容预览版。工具按本地状态结构和实际能力检查，不只按版本号拦截；扫描不修改 Codex，应用修复需由你手动退出 Codex。不能保证所有丢失数据都能恢复，也不保证升级或未来新账号会自动同步。
 
 本地文件夹和旧聊天仍在，Codex 左侧却显示“没有项目”。项目目录、数据库记录、账号侧栏状态是不同的数据层；仅重新添加文件夹，可能建立一个没有旧聊天的新项目入口。
 
@@ -34,22 +34,22 @@
 
 ## 快速开始
 
-### Windows 图形界面
+### 图形界面
 
-推荐下载 [Windows 便携预览版 v0.1.0a2](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.1.0a2)，无需安装 Python：
+Windows 用户可下载 [Windows 便携预览版 v0.1.0a2](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.1.0a2)，无需安装 Python。结构兼容版 `0.2.0a1` 正在构建中；macOS 和 Linux 可先按下方源码方式运行：
 
-1. 在下载页的 Assets 中选择 `CodexProjectRescue-0.1.0a1-windows-x64.zip`，解压到独立文件夹。
+1. 在下载页的 Assets 中选择对应版本的 `windows-x64` ZIP，解压到独立文件夹。
 2. 双击 `CodexProjectRescue.exe`，点击“开始检查”。此时可以保持 Codex 打开。
 3. 按四步引导确认项目、准备修复并核验结果。下载页同时提供 `SHA256SUMS.txt` 校验值。
 
-此发布包是社区预览版，尚未代码签名，支持向 Codex `26.1103.4239.0` 和 `26.1103.7773.0` 写入。请从本仓库的 Releases 下载，并核对对应版本说明。
+现有 Windows 发布包是旧的社区预览版，尚未代码签名。`0.2.0a1` 起不再只按版本号拦截：工具会读取本地状态结构，结构通过后允许继续。请使用对应平台的最新预览包，并核对结构检查结果。
 
-### 从源码运行
+### 从源码运行（Windows、macOS、Linux）
 
 需要 **Python 3.11 或更高版本，包含 tkinter**，运行时仅用 Python 标准库。版本与入口定义见 [pyproject.toml](pyproject.toml)。
 
 1. 下载本仓库 ZIP 并解压，或克隆仓库。
-2. 双击 `start-windows.cmd`，或在解压目录运行：
+2. Windows 可双击 `start-windows.cmd`；macOS/Linux 在解压目录运行：
 
    ```powershell
    python launch.py
@@ -57,7 +57,7 @@
 
 3. 点击“开始检查”。此时可以保持 Codex 打开。
 
-GitHub Actions 的 `Checks` 工作流也会构建 `CodexProjectRescue-Windows-preview` 制品，供开发验证；制品下载需要登录 GitHub，保存 14 天。普通用户优先使用 Releases 中的预览包。本版暂不提供自动更新。
+GitHub Actions 的 `Checks` 工作流会在 Windows、macOS、Linux 上运行同一套测试；Windows 便携包先行发布，其他平台可直接从源码运行。本版暂不提供自动更新。
 
 ### 命令行
 
@@ -68,13 +68,13 @@ codex-project-rescue --scope all scan
 codex-project-rescue scan --json
 ```
 
-`--home` 可指定 Codex 数据目录；默认使用 `CODEX_HOME`，否则使用用户目录下的 `.codex`。工具不会读取登录凭据文件。
+`--home` 可指定 Codex 数据目录；默认优先读取 `CODEX_HOME`，再按各系统常见目录寻找 `.codex`、Codex 应用数据目录。找不到时仍回退到用户目录下的 `.codex`。工具不会读取登录凭据文件。
 
 ## 如何使用
 
 1. **检查本机。** 点击“开始检查”，识别已有项目和明确的聊天关联。默认位置通常无需更改；有历史状态文件时，可从“数据位置与设置”选取。
 2. **确认项目。** 表格显示目标账号、将补回的项目及新增聊天关联；双击项目可看完整目录。“查看全部依据”列出已有和跳过的项目。默认仅恢复当前账号，也可选择你管理的所有已保存账号；切换范围会重新生成只读预览。
-3. **准备与修复。** 检查版本、备份位置、应用运行状态和预览有效性。准备好后由你手动退出 Codex，保持本工具打开，点击“重新检查运行状态”；条件满足后点击“备份并修复”。未知版本不会要求你退出，也不允许写入。
+3. **准备与修复。** 检查本地结构、备份位置、应用运行状态和预览有效性。准备好后由你手动退出 Codex，保持本工具打开，点击“重新检查运行状态”；条件满足后点击“备份并修复”。结构未知时仍可扫描，但不会写入。
 4. **核验结果。** 手动打开 Codex，检查原项目和几条旧聊天，再点击“我已核验项目和旧聊天”。工具将用户确认与自动验证区分记录；它不会自动启动或关闭 Codex。
 
 建议从资源管理器独立启动本工具。不要从 Codex 内置终端启动后依赖它在 Codex 退出时继续运行。扫描失败时也可导出匿名诊断，不必先得到成功预览。
@@ -87,15 +87,15 @@ codex-project-rescue scan --json
 
 | 项目 | 当前行为 |
 | --- | --- |
-| 实际写入平台 | Windows |
-| 已核对写入版本 | Microsoft Store `OpenAI.Codex 26.1103.4239.0`、`26.1103.7773.0`。见[适配依据](docs/compatibility.md) |
-| 其他版本 | 能识别状态格式时允许只读扫描，拒绝写入 |
+| 实际写入平台 | Windows、macOS、Linux（平台进程检测和路径需通过本机检查） |
+| 兼容判断 | 已知版本或本地状态结构通过检查；不再只依赖版本号。见[适配依据](docs/compatibility.md) |
+| 其他版本 | 版本号不在清单时仍检查本地结构；结构通过即可写入 |
 | 项目来源 | 当前/已保存账号状态、可选历史 JSON、现有 `state_5.sqlite` |
 | 多账号 | 按执行时保存的账号动态处理；修复后首次登录的新账号需重新同步 |
 | 云端关联项目 | 本版不迁移、不解除关联，保留已有记录 |
 | 缺失或冲突 | 跳过并报告，不创建替代项目，不推测聊天归属 |
 | 会话文件 | 检查文件存在，包括 `.jsonl.zst`；不证明正文完整或可以正常打开 |
-| 不适用 | 恢复已删除文件、已删除会话正文、跨 Windows 用户迁移、云端项目找回 |
+| 不适用 | 恢复已删除文件、已删除会话正文、跨用户迁移、云端项目找回 |
 
 **只有本地目录存在，并不足以承诺聊天归属恢复。** 项目列表、身份映射、线程索引或会话文件缺失时，需要分别判断。
 

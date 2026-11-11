@@ -476,7 +476,7 @@ def assert_unchanged(home: Path, before: bytes, before_backup: bytes | None):
 
 def apply(plan: Plan, backup_root: Path) -> Path:
     require_offline()
-    require_supported_build()
+    require_supported_build(plan.home)
     fresh = scan(plan.home, plan.scope, plan.extra_path)
     if fresh.input_signature != plan.input_signature or fresh.candidate != plan.candidate:
         raise RecoveryError("预览已过期，请重新扫描后再应用。")
@@ -504,7 +504,7 @@ def apply(plan: Plan, backup_root: Path) -> Path:
 
 def rollback(home: Path, backup_dir: Path, backup_root: Path) -> Path:
     require_offline()
-    require_supported_build()
+    require_supported_build(home)
     home, backup_dir = home.expanduser().resolve(), backup_dir.expanduser().resolve()
     manifest, _ = read_json(backup_dir / "manifest.json")
     if manifest.get("schema") != 1 or manifest.get("status") not in {"prepared", "applied_ui_not_verified"} or Path(manifest.get("home", "")).resolve() != home:
