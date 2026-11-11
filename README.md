@@ -36,13 +36,13 @@
 
 ### 图形界面
 
-Windows 用户可下载 [Windows 便携预览版 v0.1.0a2](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.1.0a2)，无需安装 Python。结构兼容版 `0.2.0a1` 正在构建中；macOS 和 Linux 可先按下方源码方式运行：
+推荐下载 [v0.2.0a1 跨平台预览版](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.2.0a1)，Windows、macOS（arm64）和 Linux（x86_64）均提供无需安装 Python 的便携包；旧版 Windows 包仍保留在 [v0.1.0a2](https://github.com/ZhangShixing0/codex-project-rescue/releases/tag/v0.1.0a2)：
 
-1. 在下载页的 Assets 中选择对应版本的 `windows-x64` ZIP，解压到独立文件夹。
-2. 双击 `CodexProjectRescue.exe`，点击“开始检查”。此时可以保持 Codex 打开。
+1. 在下载页的 Assets 中选择与你的系统和 CPU 架构对应的 ZIP，解压到独立文件夹。
+2. Windows 双击 `CodexProjectRescue.exe`；macOS/Linux 运行同名程序，点击“开始检查”。此时可以保持 Codex 打开。
 3. 按四步引导确认项目、准备修复并核验结果。下载页同时提供 `SHA256SUMS.txt` 校验值。
 
-现有 Windows 发布包是旧的社区预览版，尚未代码签名。`0.2.0a1` 起不再只按版本号拦截：工具会读取本地状态结构，结构通过后允许继续。请使用对应平台的最新预览包，并核对结构检查结果。
+便携包是社区预览版，尚未代码签名。`0.2.0a1` 起不再只按版本号拦截：工具会读取本地状态结构，结构通过后允许继续。请核对下载页的 SHA-256 校验值和结构检查结果。
 
 ### 从源码运行（Windows、macOS、Linux）
 
@@ -57,7 +57,7 @@ Windows 用户可下载 [Windows 便携预览版 v0.1.0a2](https://github.com/Zh
 
 3. 点击“开始检查”。此时可以保持 Codex 打开。
 
-GitHub Actions 的 `Checks` 工作流会在 Windows、macOS、Linux 上运行同一套测试；Windows 便携包先行发布，其他平台可直接从源码运行。本版暂不提供自动更新。
+GitHub Actions 的 `Checks` 工作流会在 Windows、macOS、Linux 上运行同一套测试并构建对应便携包。本版暂不提供自动更新。
 
 ### 命令行
 

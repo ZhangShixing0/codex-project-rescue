@@ -21,7 +21,7 @@
 
 默认数据目录仍可由 `CODEX_HOME` 指定；未指定时使用各平台的用户 `.codex` 目录。Windows 使用 PowerShell 检测 Codex 进程；macOS/Linux 使用 `pgrep` 检测 `ChatGPT` 或 `codex` 进程。无法可靠检测进程时拒绝写入。
 
-源码流程按平台共享。便携发布包会按 Windows、macOS、Linux 分别构建；不能把某个平台的可执行文件复制到另一个平台运行。平台包缺失时可以使用 Python 3.11+ 和 tkinter 从源码启动。
+源码流程按平台共享。`v0.2.0a1` 已按 Windows、macOS、Linux 分别构建便携包；不能把某个平台的可执行文件复制到另一个平台运行。平台包缺失时可以使用 Python 3.11+ 和 tkinter 从源码启动。
 
 ## 边界
 
