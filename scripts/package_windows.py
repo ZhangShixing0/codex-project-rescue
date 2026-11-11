@@ -17,6 +17,8 @@ def main():
     if sys.platform != "win32" or "conda" in sys.version.lower() or (Path(sys.base_prefix) / "conda-meta").exists():
         raise SystemExit("Use a clean Windows CPython installation, such as actions/setup-python.")
     repo = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(repo / "src"))
+    from codex_rescue.platform import supported_builds_label
     version = (repo / "VERSION").read_text().strip()
     dist = repo / "dist"
     executable = dist / "CodexProjectRescue.exe"
@@ -33,11 +35,11 @@ def main():
         "4. 准备修复时，由你保存工作并手动退出 Codex，保持本工具打开。\n"
         "5. 重新检查运行状态，点击“备份并修复”。完成后由你打开 Codex 核验。\n\n"
         "工具不会关闭、重启或自动打开 Codex。这是独立社区预览版。\n"
-        "当前写入仅支持 Windows Codex 26.1103.4239.0；其他版本只允许扫描。\n"
+        f"当前写入仅支持 Windows Codex {supported_builds_label()}；其他版本只允许扫描。\n"
         "完整备份含私人数据，请勿上传。详细步骤与限制见 README.md。\n"
     )
     archive = dist / f"CodexProjectRescue-{version}-windows-x64.zip"
-    sources = ["README.md", "SECURITY.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md", "VERSION", "pyproject.toml", "docs/recovery-model.md", "docs/cover.png", "docs/preview.png"]
+    sources = ["README.md", "SECURITY.md", "CONTRIBUTING.md", "THIRD_PARTY_NOTICES.md", "VERSION", "pyproject.toml", "docs/recovery-model.md", "docs/compatibility.md", "docs/cover.png", "docs/preview.png"]
     sources += [str(path.relative_to(repo)).replace("\\", "/") for path in (repo / "docs/badges").glob("*.svg")]
     sources += [str(path.relative_to(repo)).replace("\\", "/") for path in (repo / "docs/licenses").iterdir() if path.is_file()]
     if (repo / "LICENSE").is_file():

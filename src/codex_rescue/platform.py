@@ -11,7 +11,12 @@ class EnvironmentError(RuntimeError):
     pass
 
 
-SUPPORTED_BUILDS = frozenset({"26.1103.4239.0"})
+# Exact reviewed builds only. See docs/compatibility.md for evidence and limits.
+SUPPORTED_BUILDS = frozenset({"26.1103.4239.0", "26.1103.7773.0"})
+
+
+def supported_builds_label() -> str:
+    return "、".join(sorted(SUPPORTED_BUILDS, key=lambda value: tuple(map(int, value.split(".")))))
 
 
 def default_home() -> Path:

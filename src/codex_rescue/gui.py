@@ -10,7 +10,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from . import __version__
 from .core import apply, rollback, scan
-from .platform import backup_home, default_home
+from .platform import backup_home, default_home, supported_builds_label
 from .presentation import PROJECT_STATUS, build_status, failure_report, list_backups, preflight, project_overview
 from .widgets import BODY, COLORS as C, Button, folder_symbol
 
@@ -488,7 +488,7 @@ class RescueApp:
 
     def compatibility(self):
         versions = ", ".join((self.build or {}).get("versions", [])) or "未能核实"
-        messagebox.showinfo("版本兼容性", f"本机版本：{versions}\n当前写入仅适配 Windows 26.1103.4239.0。\n未知版本可以扫描，但不能强行写入。现在无需退出 Codex。", parent=self.root)
+        messagebox.showinfo("版本兼容性", f"本机版本：{versions}\n已核对写入版本：Windows {supported_builds_label()}。\n未知版本可以扫描，但不能强行写入。现在无需退出 Codex。", parent=self.root)
 
     def troubleshoot(self):
         messagebox.showinfo("下一步怎么做", "1. 确认当前登录账号属于刚才选择的恢复范围。\n2. 区分项目未显示与某条聊天打不开。\n3. 查看全部依据中的跳过原因，保留本次备份。\n4. 缺少记录时，可在设置中选择已有历史状态文件。\n5. 导出匿名诊断继续排查，避免反复覆盖。\n\nWindows 的免退出窗口绕行尚未验证。工具不会自动重启应用。", parent=self.root)
